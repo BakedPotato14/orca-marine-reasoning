@@ -1,0 +1,23 @@
+# ORCA Advisory Backend Dependencies
+fastapi
+uvicorn
+langgraph
+langchain
+shapely
+folium
+requests
+python-dotenv
+groq
+langchain-groq
+pytz
+gTTS
+SpeechRecognition
+python-multipart
+deep-translator
+
+# Geospatial data processing
+geopandas
+numpy
+pandas
+pyogrio
+pyproj

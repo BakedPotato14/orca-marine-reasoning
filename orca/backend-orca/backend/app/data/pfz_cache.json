@@ -1,0 +1,13 @@
+{
+  "sector": "Karnataka",
+  "forecast_date": "2026-09-06",
+  "valid_upto": "2026-09-07",
+  "cached_at": "2026-09-07T10:00:00+05:30",
+  "zones": [
+    {"lat": 12.9,  "lon": 74.5,  "distance_from_coast_km": 55, "depth_m": 60},
+    {"lat": 13.1,  "lon": 74.3,  "distance_from_coast_km": 40, "depth_m": 45},
+    {"lat": 12.6,  "lon": 74.8,  "distance_from_coast_km": 70, "depth_m": 75},
+    {"lat": 13.4,  "lon": 74.0,  "distance_from_coast_km": 30, "depth_m": 35},
+    {"lat": 12.3,  "lon": 75.1,  "distance_from_coast_km": 90, "depth_m": 95}
+  ]
+}

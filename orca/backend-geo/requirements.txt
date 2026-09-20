@@ -1,0 +1,12 @@
+xarray
+netcdf4
+rioxarray
+geopandas
+shapely
+folium
+fastapi
+uvicorn
+matplotlib
+branca
+numpy
+copernicusmarine

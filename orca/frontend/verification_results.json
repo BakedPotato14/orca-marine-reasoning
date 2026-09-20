@@ -1,0 +1,29 @@
+{
+  "redirectDashboard": true,
+  "statsBar": "ORCA\nMARINE AI\nDashboard\nMap Explorer\nPFZ Advisor\nLIVE\nSST (SEA TEMP)\n...\nCoastal Mean\nWAVE HEIGHT\n...\nModerate Sea\nCHLOROPHYLL-A\n...\nNutrient Upwelli",
+  "mapTabs": {
+    "ocean": "/api/geo/maps/ocean",
+    "pfz": "/api/geo/maps/pfz",
+    "safety": "/api/geo/maps/safety"
+  },
+  "rawQueryResponse": {
+    "verdict_color": "green",
+    "audio_base64_prefix": "data:audio/mp3;base64,//OExAAAAAAAAAAAAA",
+    "detected_language": "en",
+    "evidence_count": 4,
+    "forecast_series_count": 12,
+    "features_count": 3
+  },
+  "verdictBadge": "SAFE",
+  "audioSrcPrefix": "data:audio/mp3;base64,//OExAAAAAAAAAAAAAAAAAA",
+  "advisoryMapRendered": {
+    "hasLeaflet": true,
+    "markerCount": 4
+  },
+  "evidenceCardsCount": 4,
+  "forecastChartRendered": true,
+  "followUpResponse": null,
+  "conversationHistoryCount": 4,
+  "mapPageOk": true,
+  "pfzPageOk": true
+}
