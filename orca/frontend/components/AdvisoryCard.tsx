@@ -18,11 +18,16 @@ interface AdvisoryCardProps {
 
 export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isOnDeviceSpeaking, setIsOnDeviceSpeaking] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Stop audio if response changes
   useEffect(() => {
     setIsPlaying(false);
+    setIsOnDeviceSpeaking(false);
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -78,11 +83,51 @@ export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
+      if (isOnDeviceSpeaking && typeof window !== "undefined") {
+        window.speechSynthesis.cancel();
+        setIsOnDeviceSpeaking(false);
+      }
       audioRef.current.play().then(() => setIsPlaying(true)).catch((e) => {
         console.warn("Audio play blocked or failed:", e);
         setIsPlaying(false);
       });
     }
+  };
+
+  const toggleOnDeviceAudio = () => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      alert("On-device speech is not supported in this browser.");
+      return;
+    }
+
+    if (isOnDeviceSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsOnDeviceSpeaking(false);
+      return;
+    }
+
+    if (isPlaying && audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(response?.final_response || "");
+    const langMap: Record<string, string> = {
+      ta: "ta-IN",
+      te: "te-IN",
+      ml: "ml-IN",
+      hi: "hi-IN",
+      kn: "kn-IN",
+      en: "en-IN",
+    };
+    utterance.lang = (response?.detected_language && langMap[response.detected_language]) || "en-IN";
+    utterance.rate = 0.92;
+    utterance.onend = () => setIsOnDeviceSpeaking(false);
+    utterance.onerror = () => setIsOnDeviceSpeaking(false);
+
+    setIsOnDeviceSpeaking(true);
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleReplay = () => {
@@ -139,54 +184,81 @@ export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
           )}
         </div>
 
-        {/* Voice TTS playback button */}
-        {response.audio_base64 && (
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <audio
-              ref={audioRef}
-              src={audioDataUri(response.audio_base64)}
-              onEnded={() => setIsPlaying(false)}
-            />
-            <button
-              type="button"
-              onClick={toggleAudio}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                backgroundColor: isPlaying ? "rgba(0, 230, 118, 0.2)" : "rgba(0, 229, 255, 0.1)",
-                border: isPlaying ? "1px solid var(--accent-emerald)" : "1px solid rgba(0, 229, 255, 0.3)",
-                color: isPlaying ? "var(--accent-emerald)" : "var(--accent-cyan)",
-                borderRadius: "8px",
-                padding: "6px 12px",
-                fontSize: "0.78rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-              }}
-            >
-              {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-              <span>{isPlaying ? "Pause Voice" : "Play Advisory"}</span>
-            </button>
-
-            {isPlaying && (
+        {/* Voice TTS playback buttons: Server Audio + On-Device Edge Fallback */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+          {response.audio_base64 && (
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <audio
+                ref={audioRef}
+                src={audioDataUri(response.audio_base64)}
+                onEnded={() => setIsPlaying(false)}
+              />
               <button
                 type="button"
-                onClick={handleReplay}
-                title="Restart audio"
+                onClick={toggleAudio}
+                title="Play cloud synthesized voice advisory"
                 style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "var(--text-secondary)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  backgroundColor: isPlaying ? "rgba(0, 230, 118, 0.2)" : "rgba(0, 229, 255, 0.1)",
+                  border: isPlaying ? "1px solid var(--accent-emerald)" : "1px solid rgba(0, 229, 255, 0.3)",
+                  color: isPlaying ? "var(--accent-emerald)" : "var(--accent-cyan)",
+                  borderRadius: "8px",
+                  padding: "6px 12px",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
                   cursor: "pointer",
-                  padding: "4px",
+                  transition: "all 0.15s ease",
                 }}
               >
-                <RotateCcw size={14} />
+                {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                <span>{isPlaying ? "Pause Voice" : "Play Advisory"}</span>
               </button>
-            )}
-          </div>
-        )}
+
+              {isPlaying && (
+                <button
+                  type="button"
+                  onClick={handleReplay}
+                  title="Restart audio"
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: "var(--text-secondary)",
+                    cursor: "pointer",
+                    padding: "4px",
+                  }}
+                >
+                  <RotateCcw size={14} />
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* On-Device Speech Button (Always available for low connectivity / edge fallback) */}
+          <button
+            type="button"
+            onClick={toggleOnDeviceAudio}
+            title="Read advisory aloud using device speech synthesizer (works offline)"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              backgroundColor: isOnDeviceSpeaking ? "rgba(255, 171, 0, 0.2)" : "rgba(255, 255, 255, 0.04)",
+              border: isOnDeviceSpeaking ? "1px solid var(--accent-amber)" : "1px solid var(--border)",
+              color: isOnDeviceSpeaking ? "var(--accent-amber)" : "var(--text-secondary)",
+              borderRadius: "8px",
+              padding: "6px 11px",
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+            }}
+          >
+            {isOnDeviceSpeaking ? <VolumeX size={14} /> : <Volume2 size={14} />}
+            <span>{isOnDeviceSpeaking ? "Stop On-Device" : "On-Device Voice"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Advisory Narrative */}

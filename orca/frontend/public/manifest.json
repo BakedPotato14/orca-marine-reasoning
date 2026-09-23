@@ -1,0 +1,24 @@
+{
+  "name": "ORCA — Ocean Risk & Coastal Advisory",
+  "short_name": "ORCA",
+  "description": "Real-time marine safety intelligence, EEZ boundary alerts, and PFZ advisory for Indian fishermen",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0c10",
+  "theme_color": "#00e5ff",
+  "categories": [
+    "weather",
+    "navigation",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/globe.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

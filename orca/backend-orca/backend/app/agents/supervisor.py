@@ -54,7 +54,7 @@ def call_llm(query: str, context_prefix: str = "") -> str:
         f"Do not explain. Do not include punctuation, brackets, or extra words.\n"
         f"Query: \"{query}\""
     )
-    model = os.getenv("GROQ_MODEL", "groq/compound-mini")
+    model = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
     completion = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],

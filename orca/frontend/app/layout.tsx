@@ -4,15 +4,29 @@
  * Provides: dark maritime body, top navigation bar, font imports, metadata.
  * All pages inherit this shell.
  */
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Link from "next/link";
 import { Waves } from "lucide-react";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+
+export const viewport: Viewport = {
+  themeColor: "#00e5ff",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: "ORCA — Ocean Risk & Coastal Advisory",
   description:
     "Marine safety AI platform for Indian coastal fishermen. Real-time satellite oceanographic data, AI-powered advisories, and fishing zone intelligence.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "ORCA Marine",
+  },
   keywords: ["ORCA", "marine safety", "fishing zone", "PFZ", "INCOIS", "coastal advisory", "India"],
 };
 
@@ -24,6 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
+        <ServiceWorkerRegister />
         {/* ----------------------------------------------------------------
             Top Navigation Bar
             ---------------------------------------------------------------- */}

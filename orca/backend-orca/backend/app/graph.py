@@ -59,8 +59,12 @@ the accumulated state from previous turns.  The thread_id is passed via
 `config={"configurable": {"thread_id": <id>}}` in run_orca().
 """
 
+import os
+import logging
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
+
+logger = logging.getLogger(__name__)
 
 from backend.app.state import ORCAState
 
@@ -152,7 +156,21 @@ builder.add_edge("synthesis_node", END)
 #
 # For a stateless one-shot invocation, pass thread_id="default_session".
 # ---------------------------------------------------------------------------
-memory = MemorySaver()
+def _init_checkpointer():
+    redis_url = os.getenv("REDIS_URL")
+    if redis_url:
+        try:
+            from langgraph.checkpoint.redis import RedisSaver
+            logger.info("Initializing RedisSaver checkpointer from REDIS_URL=%s", redis_url)
+            return RedisSaver.from_conn_string(redis_url)
+        except Exception as exc:
+            logger.warning(
+                "Failed to initialize Redis checkpointer (%s). Falling back to in-memory MemorySaver.",
+                exc,
+            )
+    return MemorySaver()
+
+memory = _init_checkpointer()
 orca_graph = builder.compile(checkpointer=memory)
 
 

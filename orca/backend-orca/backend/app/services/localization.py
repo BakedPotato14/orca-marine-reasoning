@@ -92,7 +92,7 @@ def _get_groq_client_and_model() -> Tuple[Optional[Groq], str]:
     if not api_key or not _GROQ_AVAILABLE:
         return None, ""
     client = Groq(api_key=api_key, timeout=8.0)
-    model = os.getenv("GROQ_MODEL", "groq/compound-mini")
+    model = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
     return client, model
 
 

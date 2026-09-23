@@ -90,11 +90,24 @@ ILLUSTRATIVE_SECTOR_TRENDS_DEMO_ONLY = {
     }
 }
 
-try:
-    with open(_CACHE_PATH, "r", encoding="utf-8") as _f:
-        PFZ_CACHE = json.load(_f)
-except Exception as _e:
-    print(f"CRITICAL: pfz_agent could not load PFZ cache from {_CACHE_PATH}: {_e}")
+def reload_pfz_cache(data: Optional[dict] = None) -> bool:
+    """
+    Reloads or updates the in-memory PFZ_CACHE from a dict or disk.
+    Called on startup and by the background INCOIS PFZ fetcher.
+    """
+    global PFZ_CACHE
+    if data is not None:
+        PFZ_CACHE = data
+        return True
+    try:
+        with open(_CACHE_PATH, "r", encoding="utf-8") as _f:
+            PFZ_CACHE = json.load(_f)
+        return True
+    except Exception as _e:
+        print(f"CRITICAL: pfz_agent could not load PFZ cache from {_CACHE_PATH}: {_e}")
+        return False
+
+reload_pfz_cache()
 
 
 # ---------------------------------------------------------------------------

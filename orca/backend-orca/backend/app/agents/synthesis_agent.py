@@ -50,7 +50,7 @@ def synthesize_with_llm(
         raise NotImplementedError("groq package is not installed.")
 
     client = Groq(api_key=api_key, timeout=12.0)
-    model = os.getenv("GROQ_MODEL", "groq/compound-mini")
+    model = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
 
     # Format structured context cleanly
     context_lines = [

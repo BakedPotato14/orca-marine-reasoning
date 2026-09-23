@@ -50,6 +50,7 @@ def assess_risk_node(state: Dict[str, Any]) -> Dict[str, Any]:
         
     wave_m = weather["wave_height_m"]
     wind_kmh = weather["wind_speed_kmh"]
+    geofence = state.get("geofence_result")
     
     verdict = "safe"
     final_reasons: List[str] = []
@@ -72,16 +73,46 @@ def assess_risk_node(state: Dict[str, Any]) -> Dict[str, Any]:
         wind_status = "caution"
         final_reasons.append(f"Wind speed of {wind_kmh:.1f} km/h is elevated and warrants caution (30 - 40 km/h band).")
 
-    # 4. Roll-up Logic (Highest watermark)
-    if wave_status == "unsafe" or wind_status == "unsafe":
+    # 4. Evaluate Jurisdictional & Maritime Boundary Clearance
+    jurisdiction_status = "safe"
+    if geofence:
+        in_indian_waters = geofence.get("in_indian_waters", True)
+        current_jurisdiction = geofence.get("current_jurisdiction", "India")
+        dist_km = geofence.get("distance_to_indian_border_km")
+
+        if not in_indian_waters:
+            jurisdiction_status = "unsafe"
+            final_reasons.append(
+                f"Vessel location is outside Indian territorial waters/EEZ (Current zone: {current_jurisdiction}). "
+                "Crossing international maritime boundary is strictly hazardous."
+            )
+        elif dist_km is not None:
+            if dist_km < 5.0:
+                jurisdiction_status = "unsafe"
+                final_reasons.append(
+                    f"Extreme border proximity: Vessel is only {dist_km:.1f} km from international maritime boundary (< 5 km buffer)."
+                )
+            elif dist_km < 20.0:
+                jurisdiction_status = "caution"
+                final_reasons.append(
+                    f"Border proximity warning: Vessel is {dist_km:.1f} km from international maritime boundary (caution band: < 20 km)."
+                )
+
+    # 5. Roll-up Logic (Highest watermark rule)
+    if wave_status == "unsafe" or wind_status == "unsafe" or jurisdiction_status == "unsafe":
         verdict = "unsafe"
-    elif wave_status == "caution" or wind_status == "caution":
+    elif wave_status == "caution" or wind_status == "caution" or jurisdiction_status == "caution":
         verdict = "caution"
 
-    # 5. Final Output Construction
+    # 6. Final Output Construction
     if verdict == "safe":
-        # Overwrite the list entirely if the final verdict is safe.
-        final_reasons = ["Both wave height and wind speed for tomorrow are within safe operating limits."]
+        if geofence and geofence.get("distance_to_indian_border_km") is not None:
+            final_reasons = [
+                f"Conditions are safe: Wave height ({wave_m:.1f}m) and wind speed ({wind_kmh:.1f} km/h) are within safe operating limits, "
+                f"and maritime boundary clearance ({geofence['distance_to_indian_border_km']:.1f} km) is well beyond the 20 km caution band."
+            ]
+        else:
+            final_reasons = ["Both wave height and wind speed for tomorrow are within safe operating limits."]
             
     return {
         "risk_verdict": verdict,
