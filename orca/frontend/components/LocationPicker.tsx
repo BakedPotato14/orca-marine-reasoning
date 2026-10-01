@@ -52,10 +52,10 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
   return (
     <div
       style={{
-        backgroundColor: "rgba(18, 22, 32, 0.6)",
+        backgroundColor: "rgba(22, 24, 28, 0.75)",
         border: "1px solid var(--border)",
-        borderRadius: "8px",
-        padding: "10px 14px",
+        borderRadius: "10px",
+        padding: "10px 16px",
         display: "flex",
         flexDirection: "column",
         gap: "10px",
@@ -63,9 +63,9 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <MapPin size={16} color="var(--accent-cyan)" />
+          <MapPin size={16} color="var(--accent-gold)" />
           <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-secondary)" }}>
-            Departure / Query Port:
+            Departure Port / Anchor:
           </span>
           <span className="mono" style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: 600 }}>
             {formatCoord(location.lat, location.lon)}
@@ -81,13 +81,14 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
               display: "flex",
               alignItems: "center",
               gap: "5px",
-              backgroundColor: "rgba(0, 229, 255, 0.08)",
-              border: "1px solid rgba(0, 229, 255, 0.3)",
-              color: "var(--accent-cyan)",
+              backgroundColor: "rgba(212, 175, 55, 0.08)",
+              border: "1px solid rgba(212, 175, 55, 0.28)",
+              color: "var(--accent-gold)",
               borderRadius: "6px",
-              padding: "4px 8px",
+              padding: "4px 9px",
               fontSize: "0.75rem",
               cursor: isLocating ? "not-allowed" : "pointer",
+              transition: "all 0.2s ease",
             }}
           >
             <Navigation size={12} />
@@ -102,9 +103,10 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
               border: "1px solid var(--border)",
               color: "var(--text-secondary)",
               borderRadius: "6px",
-              padding: "4px 8px",
+              padding: "4px 9px",
               fontSize: "0.75rem",
               cursor: "pointer",
+              transition: "all 0.2s ease",
             }}
           >
             {isEditing ? "Done" : "Edit Coords"}
@@ -124,7 +126,7 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
             style={{
               width: "110px",
               padding: "4px 8px",
-              backgroundColor: "rgba(10, 12, 16, 0.9)",
+              backgroundColor: "rgba(18, 19, 22, 0.95)",
               border: "1px solid var(--border)",
               borderRadius: "4px",
               color: "var(--text-primary)",
@@ -141,7 +143,7 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
             style={{
               width: "110px",
               padding: "4px 8px",
-              backgroundColor: "rgba(10, 12, 16, 0.9)",
+              backgroundColor: "rgba(18, 19, 22, 0.95)",
               border: "1px solid var(--border)",
               borderRadius: "4px",
               color: "var(--text-primary)",
@@ -152,11 +154,11 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
           <button
             type="submit"
             style={{
-              backgroundColor: "var(--accent-cyan)",
-              color: "#0a0c10",
+              backgroundColor: "var(--accent-gold)",
+              color: "#121316",
               border: "none",
               borderRadius: "4px",
-              padding: "4px 10px",
+              padding: "4px 12px",
               fontSize: "0.75rem",
               fontWeight: 600,
               cursor: "pointer",

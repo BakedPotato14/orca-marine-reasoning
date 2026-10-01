@@ -40,24 +40,26 @@ export function VerdictBadge({ color, size = "md", showIcon = true }: VerdictBad
         alignItems: "center",
         borderRadius: "9999px",
         fontFamily: "var(--font-mono)",
-        fontWeight: 700,
-        letterSpacing: "0.06em",
+        fontWeight: 600,
+        letterSpacing: "0.08em",
         color: hex,
-        backgroundColor: `${hex}18`, // ~10% opacity
-        border: `1.5px solid ${hex}66`,
-        boxShadow: `0 0 16px ${hex}26`,
-        transition: "all 0.2s ease",
+        backgroundColor: `${hex}14`,
+        border: `1px solid ${hex}44`,
+        boxShadow: `0 2px 12px ${hex}1a`,
+        backdropFilter: "blur(6px)",
+        transition: "all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
         ...sizeStyles,
       }}
     >
-      {/* Animated pulsing dot */}
+      {/* Zen breathing indicator stone */}
       <span
+        className="zen-pulse"
         style={{
-          width: size === "lg" ? "9px" : "7px",
-          height: size === "lg" ? "9px" : "7px",
+          width: size === "lg" ? "8px" : "6px",
+          height: size === "lg" ? "8px" : "6px",
           borderRadius: "50%",
           backgroundColor: hex,
-          boxShadow: `0 0 8px ${hex}`,
+          color: hex,
           display: "inline-block",
         }}
       />

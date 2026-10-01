@@ -181,42 +181,48 @@ IMBL_ALERT_THRESHOLD_NM: float = 5.0  # Nautical miles
 IMBL_ALERT_THRESHOLD_KM: float = IMBL_ALERT_THRESHOLD_NM * 1.852  # Convert NM to km
 
 
-def _load_imbl_boundary() -> Optional[Polygon]:
-    """Load and return the IMBL boundary as a Shapely Polygon (union of all features)."""
+def _load_imbl_boundary() -> Optional[Any]:
+    """Load and return the true IMBL boundary line (excluding domestic coastline)."""
     if not IMBL_FILE.exists():
         log.warning("IMBL boundary file not found: %s", IMBL_FILE)
         return None
     try:
+        from shapely.geometry import LineString
         gdf = gpd.read_file(IMBL_FILE)
         if gdf.empty:
             log.warning("IMBL boundary file is empty")
             return None
-        # Union all geometries into a single polygon/multipolygon
-        union_geom = unary_union(gdf.geometry.values)
-        if union_geom.geom_type == "Polygon":
-            return union_geom
-        elif union_geom.geom_type == "MultiPolygon":
-            # Return the largest polygon by area as the primary boundary
-            return max(union_geom.geoms, key=lambda p: p.area)
-        else:
-            log.warning("IMBL boundary geometry type not supported: %s", union_geom.geom_type)
-            return None
+        lines = []
+        for geom in gdf.geometry.values:
+            if hasattr(geom, "geoms"):
+                for g in geom.geoms:
+                    if hasattr(g, "exterior") and len(g.exterior.coords) > 38988:
+                        lines.append(LineString(g.exterior.coords[38988:]).simplify(0.005))
+                    elif hasattr(g, "exterior"):
+                        lines.append(LineString(g.exterior.coords).simplify(0.005))
+            elif hasattr(geom, "exterior") and len(geom.exterior.coords) > 38988:
+                lines.append(LineString(geom.exterior.coords[38988:]).simplify(0.005))
+            elif hasattr(geom, "exterior"):
+                lines.append(LineString(geom.exterior.coords).simplify(0.005))
+        if lines:
+            return unary_union(lines)
+        return unary_union(gdf.geometry.values)
     except Exception as exc:
         log.error("Failed to load IMBL boundary: %s", exc)
         return None
 
 
-def reload_imbl_boundary() -> Optional[Polygon]:
+def reload_imbl_boundary() -> Optional[Any]:
     """Force reload the IMBL boundary from disk, clearing the cache."""
     global _IMBL_POLYGON
     _IMBL_POLYGON = None
     return _get_imbl_polygon()
 
 
-_IMBL_POLYGON: Optional[Polygon] = None
+_IMBL_POLYGON: Optional[Any] = None
 
 
-def _get_imbl_polygon() -> Optional[Polygon]:
+def _get_imbl_polygon() -> Optional[Any]:
     """Lazy-load and cache the IMBL polygon."""
     global _IMBL_POLYGON
     if _IMBL_POLYGON is None:
@@ -226,21 +232,15 @@ def _get_imbl_polygon() -> Optional[Polygon]:
 
 def distance_to_imbl_km(lat: float, lon: float) -> Optional[float]:
     """
-    Calculate the minimum distance from a point (lat, lon) to the IMBL boundary in kilometers.
+    Calculate the minimum distance from a point (lat, lon) to the true IMBL boundary in kilometers.
     Returns None if IMBL boundary is not available.
     """
-    polygon = _get_imbl_polygon()
-    if polygon is None:
+    boundary = _get_imbl_polygon()
+    if boundary is None:
         return None
     point = Point(lon, lat)
-    # Distance in degrees - approximate to km using haversine at midpoint
-    # For more accuracy, we project or use geodesic distance
-    min_dist_deg = polygon.exterior.distance(point)
-    # Approximate conversion: 1 degree ~ 111 km at equator, less at higher latitudes
-    # Use haversine from point to nearest point on boundary
-    # Find nearest point on boundary
-    nearest_on_boundary = polygon.exterior.interpolate(polygon.exterior.project(point))
-    return _haversine_km(lat, lon, nearest_on_boundary.y, nearest_on_boundary.x)
+    min_dist_deg = boundary.distance(point)
+    return min_dist_deg * 111.0
 
 
 def check_imbl_geofence(lat: float, lon: float) -> Dict[str, Any]:
@@ -356,61 +356,81 @@ class SpatialDataManager:
 
         log.info("🔄 Loading datasets from disk...")
         # --- 1. Sea Surface Temperature ---
-        if SST_FILE.exists():
-            ds_sst = xr.open_dataset(SST_FILE)
-            var_name = "thetao" if "thetao" in ds_sst else ("tos" if "tos" in ds_sst else list(ds_sst.data_vars)[0])
-            da_sst = ds_sst[var_name]
-            # Squeeze time and depth dimensions if present
-            while da_sst.ndim > 2:
-                da_sst = da_sst.isel({da_sst.dims[0]: 0})
-            sst_lats = ds_sst["latitude"].values
-            sst_lons = ds_sst["longitude"].values
-            sst_vals = da_sst.values
-        elif SYNTH_FILE.exists():
-            ds_syn = xr.open_dataset(SYNTH_FILE)
-            sst_vals = ds_syn["sst"].values
-            sst_lats = ds_syn["latitude"].values
-            sst_lons = ds_syn["longitude"].values
-        else:
-            raise FileNotFoundError("Neither live SST NetCDF nor synthetic NetCDF found.")
+        sst_loaded = False
+        if SST_FILE.exists() and SST_FILE.stat().st_size > 0:
+            try:
+                ds_sst = xr.open_dataset(SST_FILE)
+                var_name = "thetao" if "thetao" in ds_sst else ("tos" if "tos" in ds_sst else list(ds_sst.data_vars)[0])
+                da_sst = ds_sst[var_name]
+                while da_sst.ndim > 2:
+                    da_sst = da_sst.isel({da_sst.dims[0]: 0})
+                sst_lats = ds_sst["latitude"].values
+                sst_lons = ds_sst["longitude"].values
+                sst_vals = da_sst.values
+                sst_loaded = True
+            except Exception as exc:
+                log.warning("Could not read live SST NetCDF (%s), falling back to synthetic.", exc)
+
+        if not sst_loaded:
+            if SYNTH_FILE.exists():
+                ds_syn = xr.open_dataset(SYNTH_FILE)
+                sst_vals = ds_syn["sst"].values
+                sst_lats = ds_syn["latitude"].values
+                sst_lons = ds_syn["longitude"].values
+            else:
+                raise FileNotFoundError("Neither live SST NetCDF nor synthetic NetCDF found.")
 
         # --- 2. Significant Wave Height ---
-        if WAVE_FILE.exists():
-            ds_wave = xr.open_dataset(WAVE_FILE)
-            var_name = "VHM0" if "VHM0" in ds_wave else list(ds_wave.data_vars)[0]
-            da_wave = ds_wave[var_name]
-            while da_wave.ndim > 2:
-                da_wave = da_wave.isel({da_wave.dims[0]: 0})
-            wave_lats = ds_wave["latitude"].values
-            wave_lons = ds_wave["longitude"].values
-            wave_vals = da_wave.values
-        elif SYNTH_FILE.exists():
-            ds_syn = xr.open_dataset(SYNTH_FILE)
-            wave_vals = ds_syn["wave_height"].values
-            wave_lats = ds_syn["latitude"].values
-            wave_lons = ds_syn["longitude"].values
-        else:
-            wave_vals = np.full_like(sst_vals, 1.5)
-            wave_lats, wave_lons = sst_lats, sst_lons
+        wave_loaded = False
+        if WAVE_FILE.exists() and WAVE_FILE.stat().st_size > 0:
+            try:
+                ds_wave = xr.open_dataset(WAVE_FILE)
+                var_name = "VHM0" if "VHM0" in ds_wave else list(ds_wave.data_vars)[0]
+                da_wave = ds_wave[var_name]
+                while da_wave.ndim > 2:
+                    da_wave = da_wave.isel({da_wave.dims[0]: 0})
+                wave_lats = ds_wave["latitude"].values
+                wave_lons = ds_wave["longitude"].values
+                wave_vals = da_wave.values
+                wave_loaded = True
+            except Exception as exc:
+                log.warning("Could not read live Wave NetCDF (%s), falling back to synthetic.", exc)
+
+        if not wave_loaded:
+            if SYNTH_FILE.exists():
+                ds_syn = xr.open_dataset(SYNTH_FILE)
+                wave_vals = ds_syn["wave_height"].values
+                wave_lats = ds_syn["latitude"].values
+                wave_lons = ds_syn["longitude"].values
+            else:
+                wave_vals = np.full_like(sst_vals, 1.5)
+                wave_lats, wave_lons = sst_lats, sst_lons
 
         # --- 3. Chlorophyll-a ---
-        if CHL_FILE.exists():
-            ds_chl = xr.open_dataset(CHL_FILE)
-            var_name = "chl" if "chl" in ds_chl else ("phyc" if "phyc" in ds_chl else list(ds_chl.data_vars)[0])
-            da_chl = ds_chl[var_name]
-            while da_chl.ndim > 2:
-                da_chl = da_chl.isel({da_chl.dims[0]: 0})
-            chl_lats = ds_chl["latitude"].values
-            chl_lons = ds_chl["longitude"].values
-            chl_vals = da_chl.values
-        elif SYNTH_FILE.exists():
-            ds_syn = xr.open_dataset(SYNTH_FILE)
-            chl_vals = ds_syn["chl"].values
-            chl_lats = ds_syn["latitude"].values
-            chl_lons = ds_syn["longitude"].values
-        else:
-            chl_vals = np.full_like(sst_vals, 0.4)
-            chl_lats, chl_lons = sst_lats, sst_lons
+        chl_loaded = False
+        if CHL_FILE.exists() and CHL_FILE.stat().st_size > 0:
+            try:
+                ds_chl = xr.open_dataset(CHL_FILE)
+                var_name = "chl" if "chl" in ds_chl else ("phyc" if "phyc" in ds_chl else list(ds_chl.data_vars)[0])
+                da_chl = ds_chl[var_name]
+                while da_chl.ndim > 2:
+                    da_chl = da_chl.isel({da_chl.dims[0]: 0})
+                chl_lats = ds_chl["latitude"].values
+                chl_lons = ds_chl["longitude"].values
+                chl_vals = da_chl.values
+                chl_loaded = True
+            except Exception as exc:
+                log.warning("Could not read live Chl NetCDF (%s), falling back to synthetic.", exc)
+
+        if not chl_loaded:
+            if SYNTH_FILE.exists():
+                ds_syn = xr.open_dataset(SYNTH_FILE)
+                chl_vals = ds_syn["chl"].values
+                chl_lats = ds_syn["latitude"].values
+                chl_lons = ds_syn["longitude"].values
+            else:
+                chl_vals = np.full_like(sst_vals, 0.4)
+                chl_lats, chl_lons = sst_lats, sst_lons
 
         result = {
             "sst": {"values": sst_vals, "lats": sst_lats, "lons": sst_lons},

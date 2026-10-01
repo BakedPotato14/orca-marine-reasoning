@@ -15,13 +15,13 @@ export function DiagnosticCard({ data }: DiagnosticCardProps) {
     <div
       style={{
         marginTop: "16px",
-        backgroundColor: "rgba(25, 20, 35, 0.6)",
-        border: "1px solid rgba(255, 214, 0, 0.25)",
-        borderRadius: "8px",
-        padding: "14px 16px",
+        backgroundColor: "rgba(26, 24, 23, 0.8)",
+        border: "1px solid rgba(200, 142, 56, 0.25)",
+        borderRadius: "10px",
+        padding: "16px 18px",
         display: "flex",
         flexDirection: "column",
-        gap: "10px",
+        gap: "12px",
       }}
     >
       {/* Header */}
@@ -31,7 +31,7 @@ export function DiagnosticCard({ data }: DiagnosticCardProps) {
           <span
             style={{
               fontSize: "0.82rem",
-              fontWeight: 700,
+              fontWeight: 600,
               letterSpacing: "0.06em",
               textTransform: "uppercase",
               fontFamily: "var(--font-mono)",
@@ -48,7 +48,7 @@ export function DiagnosticCard({ data }: DiagnosticCardProps) {
               display: "flex",
               alignItems: "center",
               gap: "5px",
-              backgroundColor: "rgba(255, 214, 0, 0.12)",
+              backgroundColor: "rgba(200, 142, 56, 0.12)",
               color: "var(--accent-amber)",
               borderRadius: "4px",
               padding: "2px 8px",
@@ -69,18 +69,18 @@ export function DiagnosticCard({ data }: DiagnosticCardProps) {
           display: "flex",
           alignItems: "center",
           gap: "8px",
-          backgroundColor: "rgba(255, 214, 0, 0.08)",
-          border: "1px dashed rgba(255, 214, 0, 0.4)",
+          backgroundColor: "rgba(200, 142, 56, 0.08)",
+          border: "1px dashed rgba(200, 142, 56, 0.35)",
           borderRadius: "6px",
-          padding: "6px 10px",
-          color: "#ffe082",
+          padding: "7px 12px",
+          color: "#dfb877",
           fontSize: "0.74rem",
           fontFamily: "var(--font-mono)",
         }}
       >
         <AlertTriangle size={15} style={{ flexShrink: 0, color: "var(--accent-amber)" }} />
         <span>
-          ⚠️ Illustrative example data — not derived from live historical records.
+          ⚠️ Illustrative diagnostic projection — not derived from live historical logs.
         </span>
       </div>
 
@@ -89,8 +89,8 @@ export function DiagnosticCard({ data }: DiagnosticCardProps) {
         {data.sst_anomaly_c !== undefined && (
           <div
             style={{
-              backgroundColor: "rgba(10, 12, 16, 0.6)",
-              padding: "8px 12px",
+              backgroundColor: "rgba(18, 19, 22, 0.75)",
+              padding: "10px 12px",
               borderRadius: "6px",
               border: "1px solid var(--border)",
             }}
@@ -99,7 +99,7 @@ export function DiagnosticCard({ data }: DiagnosticCardProps) {
               <ThermometerSnowflake size={13} color="var(--accent-cyan)" />
               SST Anomaly
             </div>
-            <div className="mono" style={{ fontSize: "1.05rem", fontWeight: 700, color: data.sst_anomaly_c > 0 ? "var(--accent-red)" : "var(--accent-cyan)", marginTop: "2px" }}>
+            <div className="mono" style={{ fontSize: "1.05rem", fontWeight: 600, color: data.sst_anomaly_c > 0 ? "var(--accent-red)" : "var(--accent-cyan)", marginTop: "2px" }}>
               {data.sst_anomaly_c > 0 ? `+${data.sst_anomaly_c.toFixed(2)}` : data.sst_anomaly_c.toFixed(2)}°C
             </div>
           </div>
@@ -108,8 +108,8 @@ export function DiagnosticCard({ data }: DiagnosticCardProps) {
         {data.chlorophyll_drop_pct !== undefined && (
           <div
             style={{
-              backgroundColor: "rgba(10, 12, 16, 0.6)",
-              padding: "8px 12px",
+              backgroundColor: "rgba(18, 19, 22, 0.75)",
+              padding: "10px 12px",
               borderRadius: "6px",
               border: "1px solid var(--border)",
             }}
@@ -118,7 +118,7 @@ export function DiagnosticCard({ data }: DiagnosticCardProps) {
               <Droplets size={13} color="var(--accent-emerald)" />
               Chlorophyll Shift
             </div>
-            <div className="mono" style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--accent-amber)", marginTop: "2px" }}>
+            <div className="mono" style={{ fontSize: "1.05rem", fontWeight: 600, color: "var(--accent-amber)", marginTop: "2px" }}>
               -{data.chlorophyll_drop_pct}%
             </div>
           </div>

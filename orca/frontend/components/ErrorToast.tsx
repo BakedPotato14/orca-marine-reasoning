@@ -27,12 +27,13 @@ export function ErrorToast({ errors, onDismiss }: ErrorToastProps) {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            backgroundColor: "rgba(255, 23, 68, 0.12)",
-            border: "1px solid rgba(255, 23, 68, 0.35)",
+            backgroundColor: "rgba(184, 83, 68, 0.14)",
+            border: "1px solid rgba(184, 83, 68, 0.35)",
             borderRadius: "6px",
             padding: "8px 12px",
-            color: "#ff8a80",
+            color: "#e8988e",
             fontSize: "0.8rem",
+            fontFamily: "var(--font-mono)",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -46,7 +47,7 @@ export function ErrorToast({ errors, onDismiss }: ErrorToastProps) {
               style={{
                 background: "transparent",
                 border: "none",
-                color: "#ff8a80",
+                color: "#e8988e",
                 cursor: "pointer",
                 padding: "2px",
                 display: "flex",

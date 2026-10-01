@@ -217,9 +217,11 @@ def run_orca(
     # errors MUST be initialised to [] — the operator.add reducer concatenates
     # rather than overwrites, so the key must exist with a list value.
     initial_state: dict = {
-        "query":    query,
-        "location": {"lat": lat, "lon": lon},
-        "errors":   [],
+        "query":     query,
+        "input_lat": lat,
+        "input_lon": lon,
+        "location":  {"lat": lat, "lon": lon},
+        "errors":    [],
     }
 
     # config carries the thread_id to the MemorySaver checkpointer.

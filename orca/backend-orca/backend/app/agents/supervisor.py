@@ -46,10 +46,10 @@ def call_llm(query: str, context_prefix: str = "") -> str:
         f"{context_prefix}"
         f"You are the intent classifier for ORCA, an Indian marine safety AI.\n"
         f"Classify the following user query into exactly ONE category from this list:\n"
-        f"- safety_check\n"
-        f"- pfz_only\n"
-        f"- geofence_only\n"
-        f"- general_info\n\n"
+        f"- safety_check (safety assessments, weather, waves, wind, sea conditions, sailing permissions)\n"
+        f"- pfz_only (potential fishing zones, fish catch locations, where to fish)\n"
+        f"- geofence_only (maritime borders, international waters, EEZ, crossing boundaries)\n"
+        f"- general_info (general questions not requiring localized marine/weather telemetry)\n\n"
         f"Rules: Return ONLY the single category name in lowercase (e.g. 'safety_check'). "
         f"Do not explain. Do not include punctuation, brackets, or extra words.\n"
         f"Query: \"{query}\""
@@ -68,7 +68,7 @@ def fallback_classifier(query: str) -> str:
     """Keyword/rule-based classifier to use if the LLM fails."""
     query_lower = query.lower()
     
-    if any(word in query_lower for word in ["safe", "danger", "weather", "storm", "cyclone", "wave", "alert"]):
+    if any(word in query_lower for word in ["safe", "danger", "weather", "storm", "cyclone", "wave", "alert", "sail", "sailing", "sea", "ocean", "wind"]):
         return "safety_check"
     elif any(word in query_lower for word in ["pfz", "fish", "catch", "zone", "where to fish"]):
         return "pfz_only"
@@ -112,16 +112,44 @@ def classify_and_extract_node(state: Dict[str, Any]) -> Dict[str, Any]:
         )
 
     # -----------------------------------------------------------------
-    # 2. Location Extraction — from current query, with fallback to
-    #    last-known location from conversation_history
+    # 2. Location Extraction (priority order):
+    #    a) input_lat/input_lon — always fresh from current API request
+    #       (these bypass MemorySaver's stale checkpoint values)
+    #    b) Explicit coastal town mentioned in current query text
+    #    c) location field from state (checkpoint, for follow-up turns)
+    #    d) Last-known location from conversation_history
     # -----------------------------------------------------------------
-    location = None
+
+    # (a) Direct coords from current request — highest priority
+    input_lat = state.get("input_lat")
+    input_lon = state.get("input_lon")
+    if input_lat is not None and input_lon is not None:
+        try:
+            location = {"lat": float(input_lat), "lon": float(input_lon)}
+            print(f"Location from request coords: lat={location['lat']}, lon={location['lon']}")
+        except (ValueError, TypeError):
+            location = None
+    else:
+        location = None
+
+    # (b) Town name in query can override GPS if explicitly named
     for town, coords in COASTAL_TOWNS.items():
         if re.search(rf"\b{town}\b", query_lower):
             location = coords
             break
 
-    # Fallback: reuse last-known location from prior turns
+    # (c) Fallback: checkpoint state location (for threads that never had input_lat)
+    if location is None:
+        state_loc = state.get("location")
+        if state_loc and isinstance(state_loc, dict) and state_loc.get("lat") is not None and state_loc.get("lon") is not None:
+            try:
+                lat_f = float(state_loc["lat"])
+                lon_f = float(state_loc["lon"])
+                location = {"lat": lat_f, "lon": lon_f}
+            except (ValueError, TypeError):
+                pass
+
+    # (d) Fallback: reuse last-known location from prior turns
     if location is None and conversation_history:
         for turn in reversed(conversation_history):
             prev_loc = turn.get("location")
@@ -129,6 +157,7 @@ def classify_and_extract_node(state: Dict[str, Any]) -> Dict[str, Any]:
                 location = prev_loc
                 print(f"Multi-turn: reusing prior location {location} for follow-up query.")
                 break
+
 
     # -----------------------------------------------------------------
     # 3. Intent Classification via LLM (with multi-turn context)

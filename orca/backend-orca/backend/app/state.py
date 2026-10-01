@@ -10,12 +10,14 @@ class ORCAState(TypedDict):
     run simultaneously without cloding writes.
     """
 
-    #raw input set ek baar when graph starts
-    query: str 
+    # Raw input — always set fresh per request (no reducer = new input always beats checkpoint)
+    query: str
+    input_lat: Optional[float]   # Lat from current API request — supervisor reads this first
+    input_lon: Optional[float]   # Lon from current API request — supervisor reads this first
 
-   #supervisor writes ts
-    intent: Optional[str]       
-    location: Optional[dict]     
+    # Supervisor writes these
+    intent: Optional[str]
+    location: Optional[dict]
 
     #one parallel agent each writes ts
     weather_data: Optional[dict]     # written by weather agent read by risk and synthesis agent

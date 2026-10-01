@@ -36,7 +36,7 @@ export default function PFZAdvisorPage() {
             display: "flex",
             alignItems: "center",
             gap: "6px",
-            backgroundColor: "rgba(18, 22, 32, 0.7)",
+            backgroundColor: "rgba(18, 19, 22, 0.85)",
             padding: "4px",
             borderRadius: "8px",
             border: "1px solid var(--border)",
@@ -52,12 +52,13 @@ export default function PFZAdvisorPage() {
               fontWeight: 600,
               cursor: "pointer",
               border: "none",
-              backgroundColor: activeView === "table" ? "var(--accent-emerald)" : "transparent",
-              color: activeView === "table" ? "#0a0c10" : "var(--text-secondary)",
-              transition: "all 0.15s ease",
+              backgroundColor: activeView === "table" ? "var(--accent-gold)" : "transparent",
+              color: activeView === "table" ? "#121316" : "var(--text-secondary)",
+              boxShadow: activeView === "table" ? "0 2px 8px rgba(212, 175, 55, 0.2)" : "none",
+              transition: "all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)",
             }}
           >
-            Hotspots Table View
+            Hotspots Ledger
           </button>
           <button
             type="button"
@@ -69,12 +70,13 @@ export default function PFZAdvisorPage() {
               fontWeight: 600,
               cursor: "pointer",
               border: "none",
-              backgroundColor: activeView === "map" ? "var(--accent-emerald)" : "transparent",
-              color: activeView === "map" ? "#0a0c10" : "var(--text-secondary)",
-              transition: "all 0.15s ease",
+              backgroundColor: activeView === "map" ? "var(--accent-gold)" : "transparent",
+              color: activeView === "map" ? "#121316" : "var(--text-secondary)",
+              boxShadow: activeView === "map" ? "0 2px 8px rgba(212, 175, 55, 0.2)" : "none",
+              transition: "all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)",
             }}
           >
-            PFZ Satellite Chart View
+            Ocean Chart View
           </button>
         </div>
 

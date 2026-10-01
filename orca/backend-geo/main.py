@@ -42,14 +42,18 @@ log = logging.getLogger("orca_api")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler — non-blocking startup data refresh."""
-    # Startup: trigger background Copernicus data fetch
+    # Startup: only trigger background Copernicus fetch if datasets are missing
+    from services.spatial_analysis import SST_FILE, WAVE_FILE, CHL_FILE, SYNTH_FILE
     def background_fetch():
-        try:
-            log.info("🔄 Auto-refreshing Copernicus data on startup...")
-            results = fetch_all()
-            log.info("✅ Startup data refresh complete: %s", {k: str(v) for k, v in results.items()})
-        except Exception as exc:
-            log.warning("⚠️ Startup fetch failed (using cached/synthetic data): %s", exc)
+        if not (SST_FILE.exists() or SYNTH_FILE.exists()):
+            try:
+                log.info("🔄 Datasets missing, auto-fetching Copernicus data on startup...")
+                results = fetch_all()
+                log.info("✅ Startup data fetch complete: %s", {k: str(v) for k, v in results.items()})
+            except Exception as exc:
+                log.warning("⚠️ Startup fetch failed (using cached/synthetic data): %s", exc)
+        else:
+            log.info("✅ Satellite NetCDF datasets already loaded on disk.")
 
     thread = threading.Thread(target=background_fetch, daemon=True, name="orca-startup-fetch")
     thread.start()

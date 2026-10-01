@@ -72,14 +72,28 @@ export function PFZTable({ hotspots, isLoading, onSelectHotspot }: PFZTableProps
     >
       {/* Title & Filter Bar */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Fish size={20} color="var(--accent-emerald)" />
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "8px",
+              backgroundColor: "rgba(212, 175, 55, 0.08)",
+              border: "1px solid rgba(212, 175, 55, 0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--accent-gold)",
+            }}
+          >
+            <Fish size={18} />
+          </div>
           <div>
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
-              Potential Fishing Zones (PFZ) Active Hotspots
+            <h3 style={{ fontSize: "1.05rem", fontWeight: 600, color: "var(--text-primary)", margin: 0, fontFamily: "var(--font-serif)" }}>
+              Potential Fishing Zones (PFZ)
             </h3>
             <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>
-              Thermal & Chlorophyll oceanic frontal confluence zones
+              Thermal & Chlorophyll oceanic frontal confluence ledgers
             </span>
           </div>
         </div>
@@ -92,10 +106,10 @@ export function PFZTable({ hotspots, isLoading, onSelectHotspot }: PFZTableProps
               display: "flex",
               alignItems: "center",
               gap: "6px",
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
+              backgroundColor: "rgba(220, 212, 198, 0.04)",
               border: "1px solid var(--border)",
               borderRadius: "6px",
-              padding: "4px 10px",
+              padding: "5px 10px",
             }}
           >
             <Search size={14} color="var(--text-muted)" />
@@ -120,7 +134,7 @@ export function PFZTable({ hotspots, isLoading, onSelectHotspot }: PFZTableProps
             value={selectedState}
             onChange={(e) => setSelectedState(e.target.value)}
             style={{
-              backgroundColor: "rgba(10, 12, 16, 0.9)",
+              backgroundColor: "rgba(18, 19, 22, 0.95)",
               border: "1px solid var(--border)",
               color: "var(--text-primary)",
               borderRadius: "6px",
@@ -132,7 +146,7 @@ export function PFZTable({ hotspots, isLoading, onSelectHotspot }: PFZTableProps
           >
             {states.map((st) => (
               <option key={st} value={st}>
-                {st === "ALL" ? "All States" : st}
+                {st === "ALL" ? "All Coastal States" : st}
               </option>
             ))}
           </select>
@@ -142,7 +156,7 @@ export function PFZTable({ hotspots, isLoading, onSelectHotspot }: PFZTableProps
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             style={{
-              backgroundColor: "rgba(10, 12, 16, 0.9)",
+              backgroundColor: "rgba(18, 19, 22, 0.95)",
               border: "1px solid var(--border)",
               color: "var(--text-primary)",
               borderRadius: "6px",
@@ -153,7 +167,7 @@ export function PFZTable({ hotspots, isLoading, onSelectHotspot }: PFZTableProps
             }}
           >
             <option value="ALL">All Probabilities</option>
-            <option value="High">High Probability</option>
+            <option value="High">High Probability (High Confluence)</option>
             <option value="Moderate">Moderate Probability</option>
             <option value="Promising">Promising Edge</option>
           </select>
@@ -297,16 +311,26 @@ export function PFZTable({ hotspots, isLoading, onSelectHotspot }: PFZTableProps
                           type="button"
                           onClick={() => onSelectHotspot(h)}
                           style={{
-                            backgroundColor: "rgba(0, 229, 255, 0.08)",
-                            border: "1px solid rgba(0, 229, 255, 0.3)",
-                            color: "var(--accent-cyan)",
+                            backgroundColor: "rgba(212, 175, 55, 0.08)",
+                            border: "1px solid rgba(212, 175, 55, 0.3)",
+                            color: "var(--accent-gold)",
                             borderRadius: "6px",
-                            padding: "4px 8px",
+                            padding: "4px 10px",
                             fontSize: "0.75rem",
+                            fontWeight: 600,
                             cursor: "pointer",
                             display: "inline-flex",
                             alignItems: "center",
-                            gap: "4px",
+                            gap: "5px",
+                            transition: "all 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(212, 175, 55, 0.18)";
+                            (e.currentTarget as HTMLElement).style.boxShadow = "0 0 10px rgba(212, 175, 55, 0.2)";
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(212, 175, 55, 0.08)";
+                            (e.currentTarget as HTMLElement).style.boxShadow = "none";
                           }}
                         >
                           <ShieldCheck size={13} />

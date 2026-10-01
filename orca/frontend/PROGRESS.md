@@ -202,17 +202,22 @@ frontend-next/
 ### Phase 6 — Polish & Verify ✅ COMPLETE
 - [x] `npm run build` clean (all 7 routes prerendered / dynamic)
 - [x] `npx tsc --noEmit` clean (0 errors)
-- [ ] Live runtime verification with backends running
+- [x] Live runtime verification with backends running (:3000, :8000, :8001)
 
 ---
 
 ## Current Status
-**Phases 1 through 5 complete. Production build verified clean.**
+**All phases complete. Full system running and verified end-to-end.**
+- **Frontend (Next.js 14)**: `http://localhost:3000` (Listening)
+- **Geospatial Backend**: `http://localhost:8000` (Listening)
+- **ORCA Reasoning Backend**: `http://localhost:8001` (Listening)
 
+### Resolved Issues
+- **Missing Telemetry on Natural Language Queries**: In `backend/app/agents/supervisor.py`, `classify_and_extract_node` previously initialized `location = None` and only checked `COASTAL_TOWNS` matching the query text. If a user asked "Is it safe to sail today?" without naming a city, it discarded the client's GPS/UI coordinates in `state["location"]`, fell back to `general_info`, skipped the weather/risk nodes, and produced "telemetry unavailable". Fixed by prioritizing: (1) town in query text, (2) coordinates passed in `state["location"]`, (3) multi-turn memory fallback.
 
 ## Known Pitfalls
 - `react-leaflet` requires `'use client'` + `dynamic(() => import(...), { ssr: false })` — Next.js SSR crashes on Leaflet's `window` reference.
 - Folium maps are full HTML documents — embed ONLY via `<iframe>`, never `dangerouslySetInnerHTML`.
 - `diagnostic_data` MUST always render with the disclaimer: "⚠️ Illustrative example data — not derived from live historical records."
 - `audio_base64` from ORCA backend already includes the data URI prefix (`data:audio/mp3;base64,...`). `audioDataUri()` helper in `lib/utils.ts` detects this and passes it through directly without double-prefixing.
-- ORCA backend starts with `uvicorn backend.app.main:app` (NOT `app.main:app`) — run from `D:\SIH\orca-sih\`.
+- ORCA backend starts with `uvicorn backend.app.main:app` (NOT `app.main:app`) — run from `backend-orca`.

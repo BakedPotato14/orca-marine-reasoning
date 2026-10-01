@@ -45,10 +45,11 @@ export function EvidenceCards({ evidence }: EvidenceCardsProps) {
         <span
           style={{
             fontSize: "0.65rem",
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
-            padding: "1px 6px",
+            backgroundColor: "rgba(212, 175, 55, 0.08)",
+            border: "1px solid rgba(212, 175, 55, 0.2)",
+            padding: "1px 8px",
             borderRadius: "4px",
-            color: "var(--accent-cyan)",
+            color: "var(--accent-gold)",
           }}
         >
           {evidence.length} sources
@@ -66,17 +67,23 @@ export function EvidenceCards({ evidence }: EvidenceCardsProps) {
           <div
             key={idx}
             style={{
-              backgroundColor: "rgba(18, 22, 32, 0.7)",
+              backgroundColor: "rgba(22, 24, 28, 0.75)",
               border: "1px solid var(--border)",
               borderRadius: "8px",
               padding: "10px 12px",
               display: "flex",
               flexDirection: "column",
               gap: "6px",
-              transition: "border-color 0.2s ease",
+              transition: "border-color 0.2s ease, box-shadow 0.2s ease",
             }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(0, 229, 255, 0.3)")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--border-hover)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.25)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "none";
+            }}
           >
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -102,7 +109,7 @@ export function EvidenceCards({ evidence }: EvidenceCardsProps) {
               )}
             </div>
 
-            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.45 }}>
+            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.48 }}>
               {item.detail}
             </p>
           </div>

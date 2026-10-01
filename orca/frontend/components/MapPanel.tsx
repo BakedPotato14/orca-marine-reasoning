@@ -66,8 +66,8 @@ export function MapPanel({
           justifyContent: "space-between",
           padding: "10px 16px",
           borderBottom: "1px solid var(--border)",
-          backgroundColor: "rgba(10, 12, 16, 0.8)",
-          backdropFilter: "blur(8px)",
+          backgroundColor: "rgba(18, 19, 22, 0.92)",
+          backdropFilter: "blur(10px)",
           gap: "8px",
           flexWrap: "wrap",
         }}
@@ -92,7 +92,7 @@ export function MapPanel({
             }}
             icon={<Fish size={15} />}
             label={localPfzCount !== undefined ? `PFZ Zones (${localPfzCount})` : "PFZ Zones"}
-            accent="var(--accent-emerald)"
+            accent="var(--accent-gold)"
           />
           <TabButton
             active={currentTab === "safety"}
@@ -127,10 +127,10 @@ export function MapPanel({
               fontWeight: 600,
               fontFamily: "var(--font-mono)",
               cursor: "pointer",
-              transition: "all 0.15s ease",
-              border: mode === "lite" ? "1px solid rgba(255, 171, 0, 0.4)" : "1px solid rgba(0, 229, 255, 0.3)",
-              backgroundColor: mode === "lite" ? "rgba(255, 171, 0, 0.12)" : "rgba(0, 229, 255, 0.08)",
-              color: mode === "lite" ? "var(--accent-amber)" : "var(--accent-cyan)",
+              transition: "all 0.2s ease",
+              border: mode === "lite" ? "1px solid rgba(200, 142, 56, 0.4)" : "1px solid rgba(212, 175, 55, 0.35)",
+              backgroundColor: mode === "lite" ? "rgba(200, 142, 56, 0.12)" : "rgba(212, 175, 55, 0.08)",
+              color: mode === "lite" ? "var(--accent-amber)" : "var(--accent-gold)",
             }}
           >
             {mode === "lite" ? <Radio size={13} /> : <Zap size={13} />}

@@ -1149,6 +1149,41 @@ def create_safety_map() -> folium.Map:
     return create_ocean_dashboard_map(active_view="safety")
 
 
+def create_fallback_map(error_msg: str = "", title: str = "Ocean Map") -> folium.Map:
+    """Generate a clean fallback Folium map with Indian ports when raster data is unavailable."""
+    m = folium.Map(
+        location=[15.0, 77.5],
+        zoom_start=5,
+        min_zoom=4,
+        max_zoom=12,
+        tiles="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    )
+    m.get_root().header.add_child(folium.Element(PULSE_CSS))
+
+    for port in INDIAN_PORTS:
+        icon = _create_port_divicon(port)
+        folium.Marker(
+            location=[port["lat"], port["lon"]],
+            icon=icon,
+            tooltip=f"⚓ {port['name']} ({port['state']})",
+            popup=f"<b>⚓ {port['name']}</b><br>{port['state']}<br>Operational Fishing Base",
+        ).add_to(m)
+
+    banner_html = f'''
+    <div style="
+        position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+        z-index: 9999; background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(34, 211, 238, 0.5);
+        color: #e2e8f0; padding: 6px 16px; border-radius: 8px; font-family: sans-serif; font-size: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5); pointer-events: none; text-align: center;
+    ">
+        🧭 <strong>{title}</strong> — Harbours & Coastal Perimeter Active
+    </div>
+    '''
+    m.get_root().html.add_child(folium.Element(banner_html))
+    return m
+
+
 def create_test_dark_map() -> folium.Map:
     """Generate a test map with all markers for visual QA."""
     clear_map_cache()

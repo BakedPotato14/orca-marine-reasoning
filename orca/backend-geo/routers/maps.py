@@ -15,6 +15,7 @@ from services.map_service import (
     create_ocean_dashboard_map,
     create_pfz_map,
     create_safety_map,
+    create_fallback_map,
     get_cached_map_html,
     set_cached_map_html,
 )
@@ -35,10 +36,16 @@ def get_ocean_map():
     cached = get_cached_map_html("combined")
     if cached:
         return HTMLResponse(content=cached, status_code=200)
-    folium_map = create_ocean_dashboard_map(active_view="combined")
-    html = folium_map.get_root().render()
-    set_cached_map_html("combined", html)
-    return HTMLResponse(content=html, status_code=200)
+    try:
+        folium_map = create_ocean_dashboard_map(active_view="combined")
+        html = folium_map.get_root().render()
+        set_cached_map_html("combined", html)
+        return HTMLResponse(content=html, status_code=200)
+    except Exception as exc:
+        log.exception("Error rendering ocean map: %s", exc)
+        folium_map = create_fallback_map(str(exc), "Ocean Overview")
+        html = folium_map.get_root().render()
+        return HTMLResponse(content=html, status_code=200)
 
 
 @router.get(
@@ -52,10 +59,16 @@ def get_pfz_map():
     cached = get_cached_map_html("pfz")
     if cached:
         return HTMLResponse(content=cached, status_code=200)
-    folium_map = create_pfz_map()
-    html = folium_map.get_root().render()
-    set_cached_map_html("pfz", html)
-    return HTMLResponse(content=html, status_code=200)
+    try:
+        folium_map = create_pfz_map()
+        html = folium_map.get_root().render()
+        set_cached_map_html("pfz", html)
+        return HTMLResponse(content=html, status_code=200)
+    except Exception as exc:
+        log.exception("Error rendering PFZ map: %s", exc)
+        folium_map = create_fallback_map(str(exc), "PFZ Advisory Chart")
+        html = folium_map.get_root().render()
+        return HTMLResponse(content=html, status_code=200)
 
 
 @router.get(
@@ -69,7 +82,13 @@ def get_safety_map():
     cached = get_cached_map_html("safety")
     if cached:
         return HTMLResponse(content=cached, status_code=200)
-    folium_map = create_safety_map()
-    html = folium_map.get_root().render()
-    set_cached_map_html("safety", html)
-    return HTMLResponse(content=html, status_code=200)
+    try:
+        folium_map = create_safety_map()
+        html = folium_map.get_root().render()
+        set_cached_map_html("safety", html)
+        return HTMLResponse(content=html, status_code=200)
+    except Exception as exc:
+        log.exception("Error rendering safety map: %s", exc)
+        folium_map = create_fallback_map(str(exc), "Marine Safety & Hazard Map")
+        html = folium_map.get_root().render()
+        return HTMLResponse(content=html, status_code=200)

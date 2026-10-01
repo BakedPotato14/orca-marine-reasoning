@@ -39,38 +39,49 @@ export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
       <div
         className="glass-card"
         style={{
-          padding: "36px 24px",
+          padding: "44px 28px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           textAlign: "center",
-          gap: "14px",
+          gap: "16px",
           minHeight: "380px",
           border: "1px dashed var(--border)",
+          backgroundColor: "rgba(22, 24, 28, 0.7)",
         }}
       >
         <div
           style={{
-            width: "56px",
-            height: "56px",
+            width: "60px",
+            height: "60px",
             borderRadius: "50%",
-            backgroundColor: "rgba(0, 229, 255, 0.08)",
-            border: "1px solid rgba(0, 229, 255, 0.2)",
+            backgroundColor: "rgba(212, 175, 55, 0.08)",
+            border: "1px solid rgba(212, 175, 55, 0.28)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "var(--accent-cyan)",
+            color: "var(--accent-gold)",
+            boxShadow: "0 0 20px rgba(212, 175, 55, 0.1)",
           }}
         >
-          <Navigation size={26} />
+          <Navigation size={26} strokeWidth={1.75} />
         </div>
         <div>
-          <h3 style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
-            Awaiting Marine Query
+          <h3
+            style={{
+              fontSize: "1.2rem",
+              fontWeight: 600,
+              color: "var(--text-primary)",
+              fontFamily: "var(--font-serif)",
+              letterSpacing: "0.04em",
+              marginBottom: "6px",
+            }}
+          >
+            Awaiting Marine Inquiry
           </h3>
-          <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", maxWidth: "340px", margin: "0 auto" }}>
-            Ask ORCA about sea safety, weather conditions, safe navigation routes, or active PFZ fishing hotspots.
+          <p style={{ fontSize: "0.86rem", color: "var(--text-secondary)", maxWidth: "360px", margin: "0 auto", lineHeight: 1.6 }}>
+            Consult ORCA on sea state tranquility, boundary zones, or active ocean frontal confluence for safe passage.
           </p>
         </div>
       </div>
@@ -140,7 +151,7 @@ export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
     <div
       className="glass-card"
       style={{
-        padding: "20px 22px",
+        padding: "22px 24px",
         display: "flex",
         flexDirection: "column",
         gap: "16px",
@@ -171,14 +182,14 @@ export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
                 gap: "5px",
                 fontSize: "0.75rem",
                 color: "var(--text-secondary)",
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
+                backgroundColor: "rgba(220, 212, 198, 0.04)",
                 border: "1px solid var(--border)",
                 borderRadius: "9999px",
                 padding: "4px 10px",
                 fontFamily: "var(--font-mono)",
               }}
             >
-              <Globe size={13} color="var(--accent-cyan)" />
+              <Globe size={13} color="var(--accent-gold)" />
               <span>{languageName(response.detected_language)}</span>
             </div>
           )}
@@ -196,20 +207,20 @@ export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
               <button
                 type="button"
                 onClick={toggleAudio}
-                title="Play cloud synthesized voice advisory"
+                title="Play vocal guidance synthesized from marine knowledge"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "6px",
-                  backgroundColor: isPlaying ? "rgba(0, 230, 118, 0.2)" : "rgba(0, 229, 255, 0.1)",
-                  border: isPlaying ? "1px solid var(--accent-emerald)" : "1px solid rgba(0, 229, 255, 0.3)",
-                  color: isPlaying ? "var(--accent-emerald)" : "var(--accent-cyan)",
+                  backgroundColor: isPlaying ? "rgba(110, 156, 119, 0.2)" : "rgba(212, 175, 55, 0.1)",
+                  border: isPlaying ? "1px solid var(--accent-emerald)" : "1px solid rgba(212, 175, 55, 0.35)",
+                  color: isPlaying ? "var(--accent-emerald)" : "var(--accent-gold)",
                   borderRadius: "8px",
-                  padding: "6px 12px",
+                  padding: "6px 13px",
                   fontSize: "0.78rem",
                   fontWeight: 600,
                   cursor: "pointer",
-                  transition: "all 0.15s ease",
+                  transition: "all 0.2s ease",
                 }}
               >
                 {isPlaying ? <Pause size={14} /> : <Play size={14} />}
@@ -235,7 +246,7 @@ export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
             </div>
           )}
 
-          {/* On-Device Speech Button (Always available for low connectivity / edge fallback) */}
+          {/* On-Device Speech Button */}
           <button
             type="button"
             onClick={toggleOnDeviceAudio}
@@ -244,53 +255,66 @@ export function AdvisoryCard({ response, userCoords }: AdvisoryCardProps) {
               display: "flex",
               alignItems: "center",
               gap: "6px",
-              backgroundColor: isOnDeviceSpeaking ? "rgba(255, 171, 0, 0.2)" : "rgba(255, 255, 255, 0.04)",
+              backgroundColor: isOnDeviceSpeaking ? "rgba(200, 142, 56, 0.2)" : "rgba(220, 212, 198, 0.04)",
               border: isOnDeviceSpeaking ? "1px solid var(--accent-amber)" : "1px solid var(--border)",
               color: isOnDeviceSpeaking ? "var(--accent-amber)" : "var(--text-secondary)",
               borderRadius: "8px",
-              padding: "6px 11px",
+              padding: "6px 12px",
               fontSize: "0.75rem",
               fontWeight: 500,
               cursor: "pointer",
-              transition: "all 0.15s ease",
+              transition: "all 0.2s ease",
             }}
           >
             {isOnDeviceSpeaking ? <VolumeX size={14} /> : <Volume2 size={14} />}
-            <span>{isOnDeviceSpeaking ? "Stop On-Device" : "On-Device Voice"}</span>
+            <span>{isOnDeviceSpeaking ? "Stop Voice" : "Device Voice"}</span>
           </button>
         </div>
       </div>
 
       {/* Main Advisory Narrative */}
       <div>
-        <h4
+        <div
           style={{
-            fontSize: "0.75rem",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.08em",
-            color: "var(--text-muted)",
-            fontFamily: "var(--font-mono)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
             marginBottom: "8px",
           }}
         >
-          Synthesized Safety Advisory
-        </h4>
+          <h4
+            style={{
+              fontSize: "0.76rem",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              color: "var(--text-muted)",
+              fontFamily: "var(--font-mono)",
+              margin: 0,
+            }}
+          >
+            Synthesized Safety Guidance
+          </h4>
+        </div>
+
         <div
           style={{
-            fontSize: "0.92rem",
-            lineHeight: 1.6,
+            fontSize: "0.93rem",
+            lineHeight: 1.68,
             color: "var(--text-primary)",
-            backgroundColor: "rgba(10, 12, 16, 0.5)",
+            backgroundColor: "rgba(18, 20, 24, 0.7)",
             border: "1px solid var(--border)",
-            borderRadius: "8px",
-            padding: "14px 16px",
+            borderRadius: "10px",
+            padding: "16px 18px",
             whiteSpace: "pre-wrap",
+            boxShadow: "inset 0 1px 4px rgba(0, 0, 0, 0.2)",
           }}
         >
           {response.final_response}
         </div>
       </div>
+
+      <div className="kintsugi-divider" />
 
       {/* Standalone Advisory Chart / Route Map */}
       <div>

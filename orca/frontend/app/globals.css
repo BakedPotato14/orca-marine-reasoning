@@ -1,125 +1,181 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------------------
-   ORCA Design Tokens — Dark Maritime Theme
-   Mirror the geospatial executive dashboard aesthetic.
-   --------------------------------------------------------------------------- */
-:root {
-  --bg-primary:   #0a0c10;
-  --bg-secondary: #121620;
-  --bg-card:      rgba(22, 27, 39, 0.85);
-  --border:       rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(0, 230, 118, 0.4);
-
-  /* Accent palette */
-  --accent-cyan:    #00e5ff;
-  --accent-emerald: #00e676;
-  --accent-amber:   #ffd600;
-  --accent-red:     #ff1744;
-  --accent-blue:    #2979ff;
-  --accent-orange:  #ff6d00;
-
-  /* Typography */
-  --text-primary:   #f0f3f8;
-  --text-secondary: #90a4ae;
-  --text-muted:     #546e7a;
-
-  /* Fonts */
-  --font-ui:   'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
-
-  /* Shadows */
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.3);
-  --shadow-glow-emerald: 0 0 20px rgba(0, 230, 118, 0.2);
-  --shadow-glow-cyan:    0 0 20px rgba(0, 229, 255, 0.2);
+@theme {
+  --color-ocean-900: #0B1120;
+  --color-ocean-800: #141E30;
+  --color-ocean-700: #1E293B;
+  --color-ocean-600: #334155;
+  --color-cyan-400: #22D3EE;
+  --color-amber-400: #FBBF24;
+  --color-emerald-400: #34D399;
+  --color-red-400: #F87171;
 }
 
-/* Base reset */
+/* ─── Dark Theme (default) ─── */
+:root,
+html.dark {
+  --bg-primary:    #0B1120;
+  --bg-card:       #141E30;
+  --bg-surface:    #1E293B;
+  --border:        #334155;
+  --border-subtle: rgba(51, 65, 85, 0.4);
+  --border-glow:   rgba(34, 211, 238, 0.35);
+
+  --accent-cyan:    #22D3EE;
+  --accent-amber:   #FBBF24;
+  --accent-emerald: #34D399;
+  --accent-red:     #F87171;
+  --accent-gold:    #FBBF24;
+
+  --text-primary:   #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted:     #64748B;
+
+  --nav-bg:         rgba(11, 17, 32, 0.88);
+  --card-bg:        rgba(20, 30, 48, 0.92);
+  --input-bg:       #1E293B;
+  --input-border:   #334155;
+
+  --grid-line: rgba(51, 65, 85, 0.06);
+  --radial-glow: rgba(34, 211, 238, 0.04);
+
+  color-scheme: dark;
+}
+
+/* ─── Light Theme ─── */
+html.light {
+  --bg-primary:    #F0F4F8;
+  --bg-card:       #FFFFFF;
+  --bg-surface:    #E8EEF6;
+  --border:        #CBD5E1;
+  --border-subtle: rgba(100, 116, 139, 0.25);
+  --border-glow:   rgba(6, 182, 212, 0.4);
+
+  --accent-cyan:    #0891B2;
+  --accent-amber:   #D97706;
+  --accent-emerald: #059669;
+  --accent-red:     #DC2626;
+  --accent-gold:    #D97706;
+
+  --text-primary:   #0F172A;
+  --text-secondary: #475569;
+  --text-muted:     #94A3B8;
+
+  --nav-bg:         rgba(240, 244, 248, 0.92);
+  --card-bg:        rgba(255, 255, 255, 0.95);
+  --input-bg:       #FFFFFF;
+  --input-border:   #CBD5E1;
+
+  --grid-line: rgba(100, 116, 139, 0.08);
+  --radial-glow: rgba(8, 145, 178, 0.04);
+
+  color-scheme: light;
+}
+
+/* ─── Tailwind ocean-* aliases that respect theme ─── */
+html.light .bg-ocean-900 { background-color: var(--bg-primary) !important; }
+html.light .bg-ocean-800 { background-color: var(--bg-card) !important; }
+html.light .bg-ocean-700 { background-color: var(--bg-surface) !important; }
+html.light .bg-ocean-900\/80, html.light .bg-ocean-900\/85, html.light .bg-ocean-900\/90, html.light .bg-ocean-900\/95 { background-color: rgba(240, 244, 248, 0.9) !important; }
+html.light .bg-ocean-800\/80, html.light .bg-ocean-800\/85, html.light .bg-ocean-800\/90, html.light .bg-ocean-800\/92 { background-color: rgba(255, 255, 255, 0.9) !important; }
+html.light .bg-ocean-800\/40, html.light .bg-ocean-800\/60 { background-color: rgba(255, 255, 255, 0.6) !important; }
+html.light .bg-ocean-700\/20, html.light .bg-ocean-700\/60, html.light .bg-ocean-700\/70, html.light .bg-ocean-700\/80 { background-color: rgba(232, 238, 246, 0.8) !important; }
+html.light .border-ocean-600 { border-color: var(--border) !important; }
+html.light .border-ocean-600\/70 { border-color: rgba(203, 213, 225, 0.7) !important; }
+html.light .border-ocean-600\/60 { border-color: rgba(203, 213, 225, 0.6) !important; }
+html.light .border-ocean-700 { border-color: #CBD5E1 !important; }
+html.light .border-ocean-700\/50, html.light .border-ocean-700\/60, html.light .border-ocean-700\/70 { border-color: rgba(203, 213, 225, 0.6) !important; }
+html.light .text-slate-100 { color: #0F172A !important; }
+html.light .text-slate-200 { color: #1E293B !important; }
+html.light .text-slate-300 { color: #334155 !important; }
+html.light .text-slate-400 { color: #64748B !important; }
+html.light .text-white { color: #0F172A !important; }
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-html {
-  color-scheme: dark;
-}
-
 body {
-  font-family: var(--font-ui);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Scrollbar styling — dark maritime */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 229, 255, 0.3);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 229, 255, 0.5);
+/* Subtle ocean telemetry grid background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 0%, var(--radial-glow) 0%, transparent 60%),
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 100% 100%, 36px 36px, 36px 36px;
+  z-index: 0;
 }
 
-/* Glassmorphism card utility */
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+
+/* Glassmorphism Surface Cards */
 .glass-card {
-  background: var(--bg-card);
+  background: var(--card-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border);
   border-radius: 12px;
-  box-shadow: var(--shadow-card);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.15), 0 0 1px 1px rgba(255, 255, 255, 0.04) inset;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 .glass-card:hover {
-  border-color: rgba(0, 229, 255, 0.2);
+  border-color: rgba(34, 211, 238, 0.3);
 }
 
-/* Mono data values */
 .mono {
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  letter-spacing: 0.02em;
+  font-family: 'JetBrains Mono', 'Space Mono', monospace;
+  font-feature-settings: "tnum";
 }
 
-/* Animated pulse for verdict badge */
-@keyframes pulse-badge {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 currentColor; }
-  50%       { opacity: 0.9; box-shadow: 0 0 0 6px transparent; }
+/* Pulse indicator */
+@keyframes sea-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px currentColor; }
+  50% { opacity: 0.5; transform: scale(0.9); box-shadow: 0 0 2px currentColor; }
 }
+.zen-pulse { animation: sea-pulse 2.8s ease-in-out infinite; }
 
-/* Leaflet map override — remove default white background flash */
+/* Leaflet map styles */
 .leaflet-container {
-  background: var(--bg-primary) !important;
-  font-family: var(--font-ui) !important;
+  background: #0B1120 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+html.light .leaflet-container {
+  background: #E8EEF6 !important;
 }
 
-/* Nav links */
-.nav-link {
-  text-decoration: none;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  padding: 4px 0;
-  border-bottom: 2px solid transparent;
-}
-.nav-link:hover {
-  color: var(--text-primary);
-  border-bottom-color: var(--accent-cyan);
-}
-
-/* Invert standard OSM tiles into a sleek dark maritime nautical style without API keys */
+/* Dark mode tile filter for nautical map */
 .leaflet-dark-tiles {
-  filter: brightness(0.62) invert(1) contrast(3) hue-rotate(200deg) saturate(0.35);
+  filter: brightness(0.65) invert(1) contrast(2.2) hue-rotate(190deg) saturate(0.35);
 }
 
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .zen-pulse { animation: none !important; }
+}

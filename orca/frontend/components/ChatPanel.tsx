@@ -107,13 +107,13 @@ export function ChatPanel({
           justifyContent: "space-between",
           padding: "12px 18px",
           borderBottom: "1px solid var(--border)",
-          backgroundColor: "rgba(10, 12, 16, 0.7)",
+          backgroundColor: "rgba(18, 19, 22, 0.8)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Bot size={18} color="var(--accent-cyan)" />
-          <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--text-primary)" }}>
-            ORCA AI Marine Advisor
+          <Bot size={18} color="var(--accent-gold)" />
+          <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--text-primary)", fontFamily: "var(--font-serif)" }}>
+            ORCA Marine Dialogue
           </span>
         </div>
 
@@ -132,6 +132,7 @@ export function ChatPanel({
               cursor: "pointer",
               fontSize: "0.75rem",
               padding: "4px",
+              transition: "color 0.2s ease",
             }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--accent-red)")}
             onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--text-muted)")}
@@ -165,13 +166,13 @@ export function ChatPanel({
               padding: "20px",
             }}
           >
-            <Sparkles size={28} color="var(--accent-cyan)" opacity={0.6} />
-            <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", maxWidth: "300px" }}>
-              Ask in English, Tamil, Malayalam, Telugu, or Hindi. ORCA synthesizes weather, geofence, and fishing zone data.
+            <Sparkles size={28} color="var(--accent-gold)" opacity={0.65} />
+            <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", maxWidth: "320px", lineHeight: 1.55 }}>
+              Inquire in Tamil, Malayalam, Telugu, Hindi, or English. ORCA examines atmospheric fronts, geofences, and nutrient zones.
             </div>
 
             {/* Quick suggested prompt pills */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%", maxWidth: "340px", marginTop: "6px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "7px", width: "100%", maxWidth: "340px", marginTop: "6px" }}>
               {SAMPLE_QUERIES.map((q, idx) => (
                 <button
                   key={idx}
@@ -181,23 +182,23 @@ export function ChatPanel({
                     onSend(q);
                   }}
                   style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.03)",
+                    backgroundColor: "rgba(220, 212, 198, 0.03)",
                     border: "1px solid var(--border)",
-                    borderRadius: "6px",
-                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    padding: "9px 12px",
                     textAlign: "left",
                     color: "var(--text-primary)",
-                    fontSize: "0.78rem",
+                    fontSize: "0.8rem",
                     cursor: "pointer",
-                    transition: "all 0.15s ease",
+                    transition: "all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)",
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = "var(--accent-cyan)";
-                    (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(0, 229, 255, 0.05)";
+                    (e.currentTarget as HTMLElement).style.borderColor = "var(--accent-gold)";
+                    (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(212, 175, 55, 0.08)";
                   }}
                   onMouseLeave={(e) => {
                     (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                    (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(255, 255, 255, 0.03)";
+                    (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(220, 212, 198, 0.03)";
                   }}
                 >
                   &ldquo;{q}&rdquo;
@@ -228,13 +229,13 @@ export function ChatPanel({
               >
                 {msg.role === "user" ? (
                   <>
-                    <span>You</span>
+                    <span>Navigator</span>
                     <User size={12} />
                   </>
                 ) : (
                   <>
-                    <Bot size={12} color="var(--accent-cyan)" />
-                    <span>ORCA Advisory</span>
+                    <Bot size={12} color="var(--accent-gold)" />
+                    <span>ORCA Guidance</span>
                     {msg.response && (
                       <VerdictBadge color={msg.response.verdict_color} size="sm" showIcon={false} />
                     )}
@@ -253,15 +254,15 @@ export function ChatPanel({
                   padding: "10px 14px",
                   borderRadius: "10px",
                   fontSize: "0.85rem",
-                  lineHeight: 1.5,
+                  lineHeight: 1.55,
                   cursor: msg.response ? "pointer" : "default",
                   backgroundColor:
                     msg.role === "user"
-                      ? "rgba(0, 229, 255, 0.12)"
-                      : "rgba(18, 22, 32, 0.85)",
+                      ? "rgba(212, 175, 55, 0.12)"
+                      : "rgba(24, 26, 31, 0.88)",
                   border:
                     msg.role === "user"
-                      ? "1px solid rgba(0, 229, 255, 0.3)"
+                      ? "1px solid rgba(212, 175, 55, 0.32)"
                       : "1px solid var(--border)",
                   color: "var(--text-primary)",
                   whiteSpace: "pre-wrap",
@@ -280,14 +281,14 @@ export function ChatPanel({
               style={{
                 width: "16px",
                 height: "16px",
-                border: "2px solid rgba(0, 229, 255, 0.3)",
-                borderTopColor: "var(--accent-cyan)",
+                border: "2px solid rgba(212, 175, 55, 0.25)",
+                borderTopColor: "var(--accent-gold)",
                 borderRadius: "50%",
                 animation: "spin 0.8s linear infinite",
               }}
             />
             <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-              ORCA agents synthesizing weather, geofence, & PFZ models...
+              Harmonizing sea state, boundary, and frontal models...
             </span>
           </div>
         )}
@@ -298,7 +299,7 @@ export function ChatPanel({
         style={{
           padding: "12px 14px",
           borderTop: "1px solid var(--border)",
-          backgroundColor: "rgba(10, 12, 16, 0.9)",
+          backgroundColor: "rgba(18, 19, 22, 0.95)",
         }}
       >
         <form onSubmit={handleSend} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -313,13 +314,13 @@ export function ChatPanel({
               height: "38px",
               borderRadius: "8px",
               border: isRecording ? "1px solid var(--accent-red)" : "1px solid var(--border)",
-              backgroundColor: isRecording ? "rgba(255, 23, 68, 0.2)" : "rgba(255, 255, 255, 0.04)",
+              backgroundColor: isRecording ? "rgba(184, 83, 68, 0.25)" : "rgba(220, 212, 198, 0.04)",
               color: isRecording ? "var(--accent-red)" : "var(--text-secondary)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              transition: "all 0.15s ease",
+              transition: "all 0.2s ease",
             }}
           >
             {isRecording ? <MicOff size={18} /> : <Mic size={18} />}
@@ -333,7 +334,7 @@ export function ChatPanel({
                 ? "🎙️ Listening... click mic again to finish"
                 : isTranscribing
                 ? "Transcribing voice via Whisper..."
-                : "Ask about safety, wave heights, PFZ zones..."
+                : "Ask about sea tranquility, swell heights, fishing zones..."
             }
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
@@ -341,7 +342,7 @@ export function ChatPanel({
             style={{
               flex: 1,
               height: "38px",
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
+              backgroundColor: "rgba(220, 212, 198, 0.04)",
               border: "1px solid var(--border)",
               borderRadius: "8px",
               padding: "0 14px",
@@ -350,7 +351,7 @@ export function ChatPanel({
               fontFamily: "var(--font-ui)",
               outline: "none",
             }}
-            onFocus={(e) => (e.target.style.borderColor = "var(--accent-cyan)")}
+            onFocus={(e) => (e.target.style.borderColor = "var(--accent-gold)")}
             onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
           />
 
@@ -363,13 +364,13 @@ export function ChatPanel({
               height: "38px",
               borderRadius: "8px",
               border: "none",
-              backgroundColor: inputQuery.trim() ? "var(--accent-cyan)" : "rgba(255, 255, 255, 0.05)",
-              color: inputQuery.trim() ? "#0a0c10" : "var(--text-muted)",
+              backgroundColor: inputQuery.trim() ? "var(--accent-gold)" : "rgba(220, 212, 198, 0.05)",
+              color: inputQuery.trim() ? "#121316" : "var(--text-muted)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: inputQuery.trim() ? "pointer" : "not-allowed",
-              transition: "all 0.15s ease",
+              transition: "all 0.2s ease",
             }}
           >
             <Send size={16} />

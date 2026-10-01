@@ -18,41 +18,41 @@ interface AdvisoryMapInnerProps {
 const vesselIcon = L.divIcon({
   className: "custom-vessel-marker",
   html: `<div style="
-    width: 22px;
-    height: 22px;
-    background: #00e5ff;
-    border: 2.5px solid #ffffff;
+    width: 24px;
+    height: 24px;
+    background: #d4af37;
+    border: 2px solid #ede8df;
     border-radius: 50%;
-    box-shadow: 0 0 14px #00e5ff, 0 0 4px #000;
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.4), 0 2px 6px rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #0a0c10;
-    font-size: 11px;
+    color: #121316;
+    font-size: 12px;
     font-weight: bold;
   ">⛵</div>`,
-  iconSize: [22, 22],
-  iconAnchor: [11, 11],
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 });
 
 const destIcon = L.divIcon({
   className: "custom-dest-marker",
   html: `<div style="
-    width: 22px;
-    height: 22px;
-    background: #00e676;
-    border: 2.5px solid #ffffff;
+    width: 24px;
+    height: 24px;
+    background: #6e9c77;
+    border: 2px solid #ede8df;
     border-radius: 50%;
-    box-shadow: 0 0 14px #00e676, 0 0 4px #000;
+    box-shadow: 0 0 14px rgba(110, 156, 119, 0.4), 0 2px 6px rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #0a0c10;
-    font-size: 11px;
+    color: #121316;
+    font-size: 12px;
     font-weight: bold;
   ">🎯</div>`,
-  iconSize: [22, 22],
-  iconAnchor: [11, 11],
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 });
 
 // Helper component that flies the map to active coordinates
@@ -95,7 +95,7 @@ export default function AdvisoryMapInner({
       style={{
         width: "100%",
         height: height,
-        borderRadius: "8px",
+        borderRadius: "10px",
         overflow: "hidden",
         border: "1px solid var(--border)",
         position: "relative",
@@ -105,7 +105,7 @@ export default function AdvisoryMapInner({
         center={position}
         zoom={9}
         scrollWheelZoom={false}
-        style={{ width: "100%", height: "100%", background: "#0a0c10" }}
+        style={{ width: "100%", height: "100%", background: "#121316" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -118,8 +118,8 @@ export default function AdvisoryMapInner({
         {/* Departure Vessel Marker */}
         <Marker position={position} icon={vesselIcon}>
           <Popup>
-            <div style={{ color: "#000", fontSize: "0.8rem", padding: "4px" }}>
-              <strong>Vessel Departure</strong>
+            <div style={{ color: "#121316", fontSize: "0.8rem", padding: "4px", fontFamily: "var(--font-ui)" }}>
+              <strong style={{ color: "#222" }}>Vessel Departure</strong>
               <div>{formatCoord(lat, lon)}</div>
             </div>
           </Popup>
@@ -130,10 +130,10 @@ export default function AdvisoryMapInner({
           <Polyline
             positions={routeCoords}
             pathOptions={{
-              color: "#00e5ff",
-              weight: 3,
-              dashArray: "6, 8",
-              opacity: 0.85,
+              color: "#d4af37",
+              weight: 2.5,
+              dashArray: "5, 7",
+              opacity: 0.9,
             }}
           />
         )}
@@ -142,8 +142,8 @@ export default function AdvisoryMapInner({
         {routeCoords.length > 1 && (
           <Marker position={routeCoords[routeCoords.length - 1]} icon={destIcon}>
             <Popup>
-              <div style={{ color: "#000", fontSize: "0.8rem", padding: "4px" }}>
-                <strong>Advisory Destination / PFZ</strong>
+              <div style={{ color: "#121316", fontSize: "0.8rem", padding: "4px", fontFamily: "var(--font-ui)" }}>
+                <strong style={{ color: "#222" }}>Advisory Destination / PFZ</strong>
                 <div>{formatCoord(routeCoords[routeCoords.length - 1][0], routeCoords[routeCoords.length - 1][1])}</div>
               </div>
             </Popup>
@@ -157,10 +157,10 @@ export default function AdvisoryMapInner({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             data={geoJson as any}
             style={() => ({
-              color: "#00e676",
+              color: "#6e9c77",
               weight: 2,
-              opacity: 0.7,
-              fillOpacity: 0.15,
+              opacity: 0.75,
+              fillOpacity: 0.16,
             })}
           />
         )}

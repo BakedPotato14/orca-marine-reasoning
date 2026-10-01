@@ -14,13 +14,13 @@ export function cn(...inputs: ClassValue[]) {
 // Verdict color helpers
 // ---------------------------------------------------------------------------
 
-/** Maps verdict_color to the design-token CSS variable / hex */
+/** Maps verdict_color to the design-token CSS variable / hex in Wabi-Sabi palette */
 export function verdictToHex(color: "green" | "amber" | "red" | string): string {
   switch (color) {
-    case "green": return "#00e676";
-    case "amber": return "#ffd600";
-    case "red":   return "#ff1744";
-    default:      return "#90a4ae"; // neutral/unknown
+    case "green": return "#6e9c77"; // Lichen / tea moss green
+    case "amber": return "#c88e38"; // Aged bamboo & ochre
+    case "red":   return "#b85344"; // Earthen terracotta & cinnabar
+    default:      return "#a8a297"; // River stone neutral
   }
 }
 
@@ -106,22 +106,22 @@ export function getOrCreateThreadId(): string {
 // Marine safety status helpers
 // ---------------------------------------------------------------------------
 
-/** Maps marine safety overall_status string to a hex color */
+/** Maps marine safety overall_status string to a hex color in Wabi-Sabi palette */
 export function safetyStatusToHex(status: string): string {
   switch (status?.toUpperCase()) {
-    case "NORMAL":      return "#00e676";
-    case "CAUTION":     return "#ffd600";
-    case "ROUGH ALERT": return "#ff6d00";
-    case "DANGER":      return "#ff1744";
-    default:            return "#90a4ae";
+    case "NORMAL":      return "#6e9c77"; // Lichen / tea moss green
+    case "CAUTION":     return "#c88e38"; // Aged bamboo & ochre
+    case "ROUGH ALERT": return "#c46d3b"; // Ripe persimmon
+    case "DANGER":      return "#b85344"; // Earthen terracotta
+    default:            return "#a8a297"; // River stone
   }
 }
 
-/** Maps PFZ category to hex color */
+/** Maps PFZ category to hex color in Wabi-Sabi palette */
 export function pfzCategoryToHex(category: string): string {
-  if (category?.toLowerCase().includes("high"))     return "#00e676";
-  if (category?.toLowerCase().includes("moderate")) return "#ffd600";
-  return "#2979ff"; // Promising Edge
+  if (category?.toLowerCase().includes("high"))     return "#6e9c77"; // Lichen / moss green
+  if (category?.toLowerCase().includes("moderate")) return "#c88e38"; // Bamboo / ochre
+  return "#7ba0b2"; // Aizome oceanic indigo
 }
 
 // ---------------------------------------------------------------------------

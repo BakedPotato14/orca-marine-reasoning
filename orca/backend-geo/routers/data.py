@@ -19,6 +19,8 @@ from services.spatial_analysis import (
     compute_safety_alerts,
     compute_imbl_geofence_alerts,
     get_marine_summary,
+    INDIAN_PORTS,
+    _get_imbl_polygon,
 )
 
 log = logging.getLogger("routers.data")
@@ -106,7 +108,11 @@ def get_pfz_list(
     limit: int = Query(100, ge=1, le=500, description="Maximum number of hotspots to return"),
 ) -> Dict[str, Any]:
     """Retrieve tabular PFZ features with query filters."""
-    all_pfz = compute_pfz_features()
+    try:
+        all_pfz = compute_pfz_features()
+    except Exception as exc:
+        log.error("Failed to compute PFZ features: %s", exc)
+        all_pfz = []
 
     filtered = [
         f for f in all_pfz
@@ -165,7 +171,11 @@ def get_pfz_geojson(
     min_score: float = Query(55.0, ge=0.0, le=100.0, description="Minimum score cutoff"),
 ) -> Dict[str, Any]:
     """Export PFZ features formatted as standard GeoJSON."""
-    pfz_features = compute_pfz_features()
+    try:
+        pfz_features = compute_pfz_features()
+    except Exception as exc:
+        log.error("Failed to compute PFZ features for GeoJSON: %s", exc)
+        pfz_features = []
 
     features: List[Dict[str, Any]] = []
     for pfz in pfz_features:
@@ -241,14 +251,21 @@ def get_pfz_geojson(
 )
 def get_safety_advisories() -> Dict[str, Any]:
     """Retrieve wave hazard advisories across Indian coastal sectors."""
-    alerts = compute_safety_alerts()
-    active_warnings = [a for a in alerts if a["severity"] in ["ROUGH ALERT", "DANGER"]]
-
-    return {
-        "alert_count": len(alerts),
-        "active_hazard_sectors": len(active_warnings),
-        "sectors": alerts,
-    }
+    try:
+        alerts = compute_safety_alerts()
+        active_warnings = [a for a in alerts if a["severity"] in ["ROUGH ALERT", "DANGER"]]
+        return {
+            "alert_count": len(alerts),
+            "active_hazard_sectors": len(active_warnings),
+            "sectors": alerts,
+        }
+    except Exception as exc:
+        log.error("Failed to compute safety alerts: %s", exc)
+        return {
+            "alert_count": 0,
+            "active_hazard_sectors": 0,
+            "sectors": [],
+        }
 
 
 @router.get(
@@ -291,6 +308,47 @@ def get_imbl_geofence_alerts() -> Dict[str, Any]:
         "threshold_nm": 5.0,
         "alerts": imbl_alerts,
     }
+
+
+@router.get(
+    "/ports",
+    summary="Major Indian Fishing Harbours and Coastal Bases",
+    description="List of primary fishing harbours, landing centres, and coastal operations bases across India.",
+)
+def get_ports() -> Dict[str, Any]:
+    """Retrieve major Indian coastal fishing harbours and operational bases."""
+    return {"count": len(INDIAN_PORTS), "ports": INDIAN_PORTS}
+
+
+@router.get(
+    "/imbl-geojson",
+    summary="True IMBL Maritime Boundary Line GeoJSON",
+    description="RFC 7946 GeoJSON FeatureCollection of the official simplified Indian Maritime Boundary Line.",
+)
+def get_imbl_geojson() -> Dict[str, Any]:
+    """Retrieve the official simplified Indian Maritime Boundary Line as GeoJSON."""
+    try:
+        import shapely.geometry
+        poly = _get_imbl_polygon()
+        if poly is None:
+            return {"type": "FeatureCollection", "features": []}
+        mapped = shapely.geometry.mapping(poly)
+        return {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": mapped,
+                    "properties": {
+                        "name": "IMBL / EEZ Maritime Perimeter",
+                        "description": "International Maritime Boundary Line geofence (5 NM buffer).",
+                    },
+                }
+            ],
+        }
+    except Exception as exc:
+        log.error("Failed to generate IMBL GeoJSON: %s", exc)
+        return {"type": "FeatureCollection", "features": []}
 
 
 def _run_fetch_pipeline() -> None:
